@@ -7,7 +7,7 @@ output: html_document
 ## Objectives
 
 The objective of today's hands-on activity is to provide a basic overview of R.  For each topic covered the first part will be directed – you will follow the prescribed sequence of R commands in order to familiarize yourself with what they do.  The second part of each topic will ask you to apply these R commands. 
-
+-
 
 
 # Assignment
