@@ -1,6 +1,6 @@
 ---
-title: 'Lab 1 - R Primer'
-author: "EE509"
+title: 'EE509 Lab 1 - R Primer'
+author: "Hotimski"
 output: html_document
 ---
 
@@ -229,27 +229,45 @@ To get new functions in packages that you do not currently have installed, you w
 
 ```
 1.	Evaluate the following:
-   a.	ln(1)
-   b.	ln(0)
-   c.	ln(e)
-   d.	ln(-5)
-   e.	-ln(5)
-   f.	ln(1/5)
-   g.	How does R represent when the output of a function is not a number?
+   a.	ln(1) = log(1) = 0
+   b.	ln(0) = log(0) = -Inf
+   c.	ln(e) = log(exp(1)) = 1
+   d.	ln(-5) = log(-5 + 0i) = 1.609438+3.141593i # result is a complex number so need to add 0i to log function; otherwise, we get NaN
+   e.	-ln(5) = -log(5) = -1.609438
+   f.	ln(1/5) = log(1/5) = -1.609438
+   g.	How does R represent when the output of a function is not a number? NaN 
    
-2.	Looking back at the Triginometry section, hy are we multiplying the results of the atan and atan2 functions by 180/pi? 
+2.	Looking back at the Triginometry section, why are we multiplying the results of the atan and atan2 functions by 180/pi? 
+    By default, the output of trig functions in R are in radians. Multiplying by 180/pi converts the output to degrees.
 
 3.	What is the difference between log and log10? (hint: use `help()`)
+    log10() will compute common (base 10) logs. log() will compute natural logs (base e) by default, but we can specify another base in the function call. Since log10 is a common log, it is a built-in function in R. 
 
 4.	Given a right triangle with sides x = 5 and y = 13, calculate the length of the hypotenuse (show code and use variables)
-
+```
+```{r}
+x <- 5
+y <- 13
+h <- sqrt(x^2 + y^2) # pythagorean theorem
+h
+```
+```
 5.	Subtract the month you were born from the remainder left after you divide the year you were born by the day you were born (show code)
+```
+```{r}
+day <- 1
+month <- 1 
+year <- 2000
+
+remainder <- year %% day
+result <- remainder - month
+result
 ```
 
 
 ## R Scripts
 
-Now click on File>New File>R Script to open up a new script window.  It is often useful to work on R from a script window (or a new Rmd) because it provides a record of what you did in your analysis and can be reused for similar analyses.  It is particularly essential for more complicated analyses. From the File > New File menu you'll also see that R Studio supports a wide range of R file formats (R scripts, Rmd, R notebooks, Quarto) as well as a wide range of other programing languages.
+Now click on File>New File>R Script to open up a new script window.  It is often useful to work on R from a script window (or a new Rmd) because it provides a record of what you did in your analysis and can be reused for similar analyses.  It is particularly essential for more complicated analyses. From the File > New File menu you'll also see that R Studio supports a wide range of R file formats (R scripts, Rmd, R notebooks, Quarto) as well as a wide range of other programming languages.
 
 In the script window type
  
