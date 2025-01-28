@@ -307,11 +307,26 @@ prod(1:10)		## product of values in a vector
  
 ```
 Questions:
-6.	Describe the difference in output between sum and cumsum.
+6.	Describe the difference in output between sum and cumsum. 
+sum() will output one value that's the sum of all values in a vector. cumsum() will output multiple values, each a cumulative sum of the values in the vector up to that position. 
+
 7.	Generate a sequence of even numbers from -6 to 6
+seq(-6, 6, by=2)
+
 8.	Generate a sequence of values from -4.8 to -3.43 that is length 8 (show code)
+seq(-4.8, -3.43, length=8)
+
   - What is the difference between values in this sequence?
+  a <- seq(-4.8, -3.43, length=8)
+  b <- diff(a)
+  b
+  0.1957143 0.1957143 0.1957143 0.1957143 0.1957143 0.1957143 0.1957143
+
 9. What is the sum of the exponential of the sequence in question 8?
+c <- exp(a)
+sum(c)
+c
+0.144133
 ```
 
 ## Loading and Saving Data
@@ -371,8 +386,15 @@ Within the Environment window, clicking on a variable will show you the contents
 Question:
 
 10.	Use R commands (e.g., do not click "import dataset" and use the dialog there) to read in the file `met_hourly.csv` and assign it the variable name `met`
-
+```
+```{r}
+met <- read.csv("data/met_hourly.csv")
+```
+```
 11. Save the vector `x` to a new csv file 
+```
+```{r}
+write.csv(x, "data/x.csv")
 ```
 
 
@@ -448,8 +470,21 @@ as.matrix(dat)
 ```
 Questions:
 12.	Show just the spots data as characters
+```
+```{r}
+as.character(dat$spots)
+```
+```
 13.	Show the 3rd through 8th rows of the 1st  though 3rd columns
+```
+```{r}
+dat[3:8,1:3]
+```
+```
 14.	Show just the odd numbered rows in the frog data. Write this code for the GENERAL CASE (i.e. don’t just type c(1,3,5,…) but use functions that you learned in previous sections to set up the sequence.
+```
+```{r}
+dat[seq(1, nrow(dat), by=2), "frogs"]
 ```
 
 ## Combining vectors
@@ -485,6 +520,9 @@ rbind(q,p)		# bind as rows
 ```
 Question:
 15.	Create a character vector that contains the names of 4 people you admire.
+```
+```{r}
+ppl <- c("Imogen", "Hillary", "Anna", "Meredith")
 ```
 
 ## Logical operators and indexing
@@ -653,6 +691,25 @@ Question
 *  d.	display just the rows where there are less than 2.5 red frogs
 *  e.	display where either frogs do not have spots or there are more than 5 frogs
 ```
+```{r}
+# a
+dat[dat$spots,]
+
+# b
+dat[dat$color == "blue",]
+
+# c
+tad <- dat |> filter(tadpoles >= 3 & tadpoles <= 5) # assigns new row numbers
+tad
+new_object <- dat[dat$tadpoles >= 3 & dat$tadpoles <= 5,] # keeps og row numbers
+new_object
+
+# d
+dat[dat$color == "red" & dat$frogs < 2.5,]
+
+# e
+dat[dat$spots == FALSE | dat$frogs > 5,]
+```
 
 ## Plots, tables, and exploratory analysis
 
@@ -732,6 +789,11 @@ head(met)
 Question
 17. **Use dplyr to calculate the *daily* mean air temperature**
 ```
+```{r}
+airtemp_mean <- met |> 
+  group_by(date) |> 
+  summarise(airtemp_mean = mean(AirTemp))
+```
 
 # Plotting & visualization 
 
@@ -757,9 +819,27 @@ Within the Plot window, graphs can be cut-and-pasted into other documents or sav
 ```
 Questions
   18.	Plot a histogram of blue frogs
+  ```
+```{r}
+hist(dat$frogs[dat$color == "blue"], col="lightblue", main="Blue Frogs", xlab="Number of Frogs", ylab="Frequency")
+```
+```
   19. Plot shortwave (solar) radiation against time
+```
+```{r}
+# yearly
+plot(met$time, met$ShortWave, main = "Shortwave radiation (2013)", xlab = "Time", ylab = "Shortwave radiation (W/m^2)")
+# a day
+plot(met$time[1:24], met$ShortWave[1:24], main = "Shortwave radiation (Jan 30, 2013)", xlab = "Time", ylab = "Shortwave radiation (W/m^2)")
+```
+
+```
   20. Plot shortwave (solar) radiation against relative humidity
 ```
+```{r}
+plot(met$ShortWave, met$RelHum, main = "Shortwave radiation vs. Relative Humidity", xlab = "Shortwave radiation (W/m^2)", ylab = "Relative Humidity (%)")
+```
+
 
 ## Tidyverse
 
@@ -782,17 +862,44 @@ Question
 * Select “met” as the data.frame
 * Click “validate imported data”
 * Drag AirTemp into the Y box (which will initially cause the tool to draw a histogram)
-* Click on “Labels and Title” to add axes labels, units, and title
+* Click on “Labels and Title” to add axes, labels, units, and title
 * Click on “Plot options” to change the color, theme, and number of bins
 * Click on “Data” and filter the dates down to just the summer (approximately)
 * Click on Export & code and hit “insert code into script” to add the code for this figure
 * When you do this you’ll see a lot of new syntax. First, the `%>%` is known as the _pipe operator_ and is used string together multiple functions. So here we see that we start with the met data, then we filter it based upon time, then we call ggplot(). After we call ggplot we see that the different parts of the figure are added together using a `+`. First, we use `aes` (aesthetic) to select the data being used. Then `geom_histogram` is called to plot a histogram, with additional arguments for the number of bins and the fill color (in this case specified using a hexadecimal color code). Next, we see axis labels being set using the `labs` command. Finally we see the theme that’s been applied.
 * Turn in the code for drawing your histogram
+```
+```{r}
+# put airtemp into X axis 
 
+library(ggplot2)
+
+ggplot(met) +
+ aes(x = AirTemp) +
+ geom_histogram(bins = 30L, fill = "#8FABDC") +
+ labs(x = "Air Temperature (Celsius)", 
+ y = "Frequency ", title = "Air Temperature Histogram") +
+ theme_bw()
+```
+```
 22. Line/scatter plot
 * Returning to the ggplot builder, next drag “time” into the X box, which should turn the plot into a time series line plot.
 * As before you can play with label, plot options, data filtering, etc
-* Export this code to your Rmd as well and briefly explain (in text) what has changed in your code from the histogram plot
+* Export this code to your Rmd as well and briefly explain (in text) what has changed in your code from the histogram plot.
+The line/scatter plot has an additional variable in aes, geom_line is specific to drawing a line plot (linewidth vs bins), font modifications, etc. 
+```
+```{r}
+library(ggplot2)
+
+ggplot(met) +
+ aes(x = time, y = AirTemp) +
+ geom_line(linewidth = 0.4, colour = "#0A1425") +
+ labs(x = "Date", 
+ y = "Air Temperature (Celsius)", title = "Daily Air Temperature (2013)") +
+ theme_bw() +
+ theme(axis.text.y = element_text(size = 14L), 
+ axis.text.x = element_text(size = 14L), legend.text = element_text(face = "italic", size = 14L), 
+ legend.title = element_text(face = "italic", size = 14L))
 ```
 
 ## Classical tests
@@ -837,7 +944,7 @@ plot(dat$frogs,dat$tadpoles,
      cex.main=2			# increase title font size
      )
 abline(reg1,col="green",		# add the regression line
-     ,lwd=3)				# increase the line width
+     lwd=3)				# increase the line width
 legend("topleft",
        c("Red no spot","Blue no spot","Red spots","Blue Spots"),
        pch=c(1,1,2,2),
@@ -851,6 +958,16 @@ Question
   a.	Fit a linear model of tadpoles as a function of frogs for just the RED individuals and report the summary data of the fit.  
   b.	Make a scatter plot of this data that includes the regression line
 ```
+```{r}
+# a
+red_frogs <- dat[dat$color == "red",]
+red_lm <- lm(tadpoles ~ frogs, data = red_frogs)
+summary(red_lm)
+
+# b
+plot(red_frogs$frogs, red_frogs$tadpoles, col = "red", xlab = "Frog Density", ylab = "Tadpole Density", main = "Red Frogs")
+abline(red_lm, col = "black", lwd = 1)
+```
 
 ## IF statements
 
@@ -863,7 +980,7 @@ if(condition){
 	## Do Z
 }
 ```
-s
+
 The “condition” part of this syntax is always a logical comparison, which does the first part (Y) if the condition is TRUE and the second part if it is FALSE. It should also be noted that the “else{ }” part of the syntax is optional, which would correspond to telling the computer, “if X do Y, otherwise just keep going”. For example, if we wanted to do integer division on integers but normal division otherwise we could write 
 
 ```{r}
@@ -895,11 +1012,20 @@ For cases where the outcomes are simple, or when we want to apply an ‘if’ to
 ifelse(dat$frogs>0, log(dat$frogs),log(-dat$frogs))
 ```
 
-Aside: As is very common in R, as we learn more we often find more efficient ways of solving problems . For example, the above is equivalent to log(abs(dat$frogs))
+Aside: As is very common in R, as we learn more we often find more efficient ways of solving problems. For example, the above is equivalent to log(abs(dat$frogs))
 
 ```
 Question
 24.	Write an if statement that makes a scatter plot of x if all the values are positive, and plots a histogram otherwise.
+```
+```{r}
+x <- 1:10 # from beginning of doc
+
+if(all(x > 0)){
+  plot(x)
+} else {
+  hist(x)
+}
 ```
 
 ## Defining custom functions
@@ -927,6 +1053,9 @@ my.division = function(x,y){
 	return(x)
 }
 
+x <- 10 # added for testing
+y <- 5 # added for testing
+
 my.division(x,y)
 my.division(y,x)
 my.division(x,"5")
@@ -935,7 +1064,38 @@ my.division(x,"5")
  
 ```
 Question
-25.	Convert the more complicated graphing example at the end of  “Classic Tests” into a function that will make the same plots for any data set. Show how you would call the function passing it just the subset of data where there are 5 or more tadpoles.
+25.	Convert the more complicated graphing example at the end of “Classic Tests” into a function that will make the same plots for any data set. Show how you would call the function passing it just the subset of data where there are 5 or more tadpoles.
+```
+```{r}
+ribbit_fun <- function(data){
+  
+  frogs <- data$frogs
+  tadpoles <- data$tadpoles
+  color <- data$color
+  spots <- data$spots
+  
+  plot(frogs,tadpoles,
+     cex=1.5,  			# increase the symbol size
+     col=as.character(color),	# change the symbol color by name
+     pch=spots+1,			# change the symbol (by number)
+     cex.axis=1.3,			# increase the font size on the axis 
+     xlab="Frog Density",		# label the x axis
+     ylab="Tadpole Density",		# label the y axis
+     cex.lab=1.3,			# increase the axis label font size
+     main="Frog Reproductive Effort", # title
+     cex.main=2			# increase title font size
+     )
+  abline(reg1,col="green",		# add the regression line
+     lwd=3)				# increase the line width
+  legend("topleft",
+       c("Red no spot","Blue no spot","Red spots","Blue Spots"),
+       pch=c(1,1,2,2),
+       col=c("red","blue","red","blue"),cex=1.3
+       )
+}
+
+input <- dat[dat$tadpoles >= 5,]
+ribbit_fun(input)
 ```
 
 ## For loops
@@ -973,6 +1133,19 @@ plot(N)
 ```
 Question
 26.	Starting with a vector x = 1:10, write a for loop that adds 5 to each value in the vector. Note that it is permissible to assign an element in a vector to itself (e.g. x[i] = x[i] + 5)
+```
+```{r}
+# set up var
+x <- 1:10
+x 
+
+# loop 
+for (i in 1:length(x)){
+  x[i] <- x[i] + 5
+}
+
+# output
+x
 ```
 
 ## Vector and Matrix Math
@@ -1061,3 +1234,5 @@ Everyone:
  +	Search for new functions and techniques
  +	Scour the web when debugging. 
 * The key to good programming is being able to teach yourself
+
+note: used github copilot during the assignment
