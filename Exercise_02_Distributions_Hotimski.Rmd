@@ -1,6 +1,6 @@
 ---
-title: 'Lab 2: Probability distributions'
-author: "GE509"
+title: 'EE 509 Lab 2: Probability distributions'
+author: "Hotimski Al"
 output: html_document
 ---
 
@@ -112,7 +112,9 @@ pnorm(0.5,2,1)
 pnorm(0.5,-1,2)
 ```
 
-If the value 0.5 here corresponded to some hypothesis, the **CDF could be use to calculate a p-value associated with the one-sided test**. Would any be significant at $\alpha$=0.05 significance?
+If the value 0.5 here corresponded to some hypothesis, the **CDF could be used to calculate a p-value associated with the one-sided test**. Would any be significant at $\alpha$=0.05 significance? 
+To be statistically significant the p-value must be less than 0.05 and all values above are higher; therefore, none are stat significant. 
+
 
 Next let's look at the function qnorm.  Since the input to this function is a quantile, the x-values for the plot are restricted to the range [0,1].
 
@@ -206,7 +208,9 @@ lines(x,dunif(x,-3,3),col=2)
 ### Lab questions: 
 ```
 1. Why does the height of the uniform PDF change as the width changes?
+The area under the curve of a uniform PDF must always sum to 1. If the height is larger, then the width will be smaller. 
 2. What do the second and third arguments to the uniform specify? What are their default values?
+dunif(x, min = 0, max = 1) : the second and third arg specify the range (begining, end) of the desired dustribution. By default they are set to 0 and 1, respectively. 
 ```
 
 ### Beta
@@ -245,8 +249,62 @@ lines(p,dbeta(p,3,3),col=2)
 ```
 Lab questions: 
   3) The Beta has a special case, Beta(1,1) that is equivalent to what other PDF?
+  Beta(1, 1) is equivalent to the default uniform distribution.
+```
+```{r}
+plot(p,dbeta(p,1,1),type='l')
+```
+```
   4) In the first panel, the mean is the same for each line (0.5).  What are the variances? (Hint: Calculate this analytically. Look up the distribution in one of the recommended references.)
+```
+```{r}
+# clark pg 581
+
+# fuction 
+beta_var_fun <- function(a, b) {
+  r <- a * b / ((a + b)^2 * (a + b + 1))
+  return(r)
+}
+
+# calcualtaions
+var1 <- beta_var_fun(5, 5)
+var2 <- beta_var_fun(1, 1)
+var3 <- beta_var_fun(0.2, 0.2)
+
+# output 
+var1 # beta(5, 5)
+var2 # beta(1, 1)
+var3 # beta(0.2, 0.2)
+```
+```
   5) In the second panel, what are the means and medians of each of these curves?  (Hint: you'll need to calculate the mean analytically and use one of the variants of R's beta function to find the median.)
+```
+```
+install.packages("betafunctions")
+```
+```{r}
+# clark pg 581
+
+# load package
+library(betafunctions)
+
+# inputs 
+alpha <- c(6, 6, 6, 6, 6, 6)
+beta <- c(6, 4, 2, 1.25, 1, 0.25)
+
+# mean function 
+beta_mean_fun <- function(a, b) {
+  r <- a / (a + b)
+  return(r)
+}
+
+# calc means
+beta_means <- beta_mean_fun(alpha, beta)
+beta_means
+
+# calc medians
+beta_medians <- betamedian(alpha, beta)
+beta_medians
 ```
 
 ### Log Normal
@@ -506,3 +564,5 @@ lines(x,dnbinom(x,1,0.15),type="s",col=4,lty=2)
 14)  In the 'vary size' panel, what are the means of the curves? 
 15) In the “vary variance” panel, how does the shape of the Negative Binomial compare to a Poisson with the same mean?
 ```
+
+note: used github copilot during the assignment
