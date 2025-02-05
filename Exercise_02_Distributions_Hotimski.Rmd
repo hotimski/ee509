@@ -583,7 +583,7 @@ For small numbers, both the Poisson and Binomial distributions are right skewed 
 
 12) Is the Poisson a good approximation of the Binomial?
 
-For the same mean and variance, the Poisson and Binomial distributions have similar shapes and tails, however, the binomial's values are more concentrated around the mean and has a higher max at the mean. With some tinkering the distributions can have similar shapes, but the means and var will be different, which can introduce errors and uncertainty. Also Poisson is discrete. 
+For the same mean and variance, the Poisson and Binomial distributions have similar shapes and tails, however, the binomial's values are more concentrated around the mean and has a higher max at the mean. With some tinkering the distributions can have similar shapes, but the means and var will be different, which can introduce errors and uncertainty. 
 
 13) Is it possible to choose the parameters so that the Poisson and Binomial to both have the same mean and  variance?  If so what is this parameterization?
 
