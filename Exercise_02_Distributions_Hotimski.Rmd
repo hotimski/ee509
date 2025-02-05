@@ -209,6 +209,7 @@ lines(x,dunif(x,-3,3),col=2)
 ```
 1. Why does the height of the uniform PDF change as the width changes?
 The area under the curve of a uniform PDF must always sum to 1. If the height is larger, then the width will be smaller. 
+
 2. What do the second and third arguments to the uniform specify? What are their default values?
 dunif(x, min = 0, max = 1) : the second and third arg specify the range (begining, end) of the desired dustribution. By default they are set to 0 and 1, respectively. 
 ```
@@ -309,7 +310,7 @@ beta_medians
 
 ### Log Normal
 
-The lognormal is a log transform of the normal distribution.  It is defined on the range X > 0 so is commonly used for data that cannot be negative by definition.  The distribution is also positively skewed so is often used for skewed data.  One thing that often goes unappreciated with the log-normal is that the mean, E[X], depends on the variance:
+The lognormal is a log transform of the normal distribution.  It is defined on the range X > 0 so is commonly used for data that cannot be negative by definition.  The distribution is also positively skewed so is often used for skewed data.  One thing that often goes unappreciated with the log-normal is that the mean, E[X], depends on the variance (showing arithmetic mean):
 
 $$E[X] = e^{\mu + {{1}\over{2}}\sigma^2}$$
 
@@ -351,6 +352,34 @@ lines(x,dlnorm(x,2,1),col=4)
 ```
 6) What are the arithmetric and geometric means of the three curves in the first panel? (Reminder: arithmetic means are means in the linear domain, geometric means are means in the log domain)
 ```
+```{r}
+# dlnorm(x, menalog), so the curves have meanlogs of 0, 1, 2. meanlogs are the velues plugged into the mu in AM and GM formulas.
+# ref wiki for GM formula
+
+# gm functuon
+gm_fun <- function(mu) {
+  r <- exp(mu)
+  return(r)
+}
+
+# am function 
+am_fun <- function(mu, sigma) {
+  r <- exp(mu + ((sigma^2) / 2 ))
+}
+
+# est variables
+mu <- c(0, 1, 2)
+sigma <- 1 # default
+
+# calc means
+gm <- gm_fun(mu)
+am <- am_fun(mu, sigma)
+
+# output
+gm
+am
+```
+
 
 ## Exponential & Laplace
 
@@ -372,16 +401,20 @@ hist(rexp(250,2),breaks=30,probability=TRUE)
 lines(x,dexp(x,2),col=4)
 
 ## laplace vs Gaussian
-plot(x,dexp(abs(x-5),1)/2,type='l')
+plot(x,dexp(abs(x-5),1)/2,type='l', main = "Laplace vs Gaussian, mean = 5, variance = 1")
 lines(x,dnorm(x,5),col=2)
+legend("topright",legend=c("Laplace","Gaussian"),lty=1,col=1:2)
 
-plot(x,dexp(abs(x-5),1)/2,type='l',log='y')   ## same plot as last but on a log scale
+plot(x,dexp(abs(x-5),1)/2,type='l',log='y',main = "Laplace vs Gaussian, mean = 5, variance = 1 (log scale)" )   ## same plot as last but on a log scale
 lines(x,dnorm(x,5),col=2)
+legend("topright",legend=c("Laplace","Gaussian"),lty=1,col=1:2)
 ```
 
 ### Lab questions:
 ``` 
 7) The last two panels compare a normal and a Laplace distribution with the same mean and variance.  How do the two distributions compare?  In particular, compare the difference in the probabilities of extreme events in each distribution.
+
+Laplace has thicker tails (extreme events are more likely), probability value at the mean is higher, and it increases/decreases faster (exponentially) than the normal distribution around the mean. On the log scale we see Laplace changing with a linear slope, while the normal changes with a quadratic slope.
 ```
 
 ## Gamma
@@ -392,14 +425,14 @@ The gamma and inverse-gamma distribution are flexible distributions defined for 
 x <- seq(0,10,by=0.01)
 
 ## change rate
-plot(x,dgamma(x,3,3),type='l' ,ylim=c(0,1.6))
+plot(x,dgamma(x,3,3),type='l' ,ylim=c(0,1.6), main = "Changing the Rate")
 lines(x,dgamma(x,3,1),col=2)
 lines(x,dgamma(x,3,6),col=3)
 lines(x,dgamma(x,3,1/3),col=4)
 legend("topright",legend=c(3,1,6,0.33),lty=1,col=1:4)
 
 ## change shape
-plot(x,dgamma(x,3,3),type='l')
+plot(x,dgamma(x,3,3),type='l', main = "Changing the Shape")
 lines(x,dgamma(x,1,3),col=2)
 lines(x,dgamma(x,6,3),col=3)
 lines(x,dgamma(x,18,3),col=4)
@@ -408,9 +441,16 @@ legend("topright",legend=c(3,1,6,18),lty=1,col=1:4)
 ## change variance
 a <- c(20,15,10,5,2.5,1.25)
 r <- c(4,3,2,1,0.5,0.25)
-plot(x,dgamma(x,20,4),type='l')
+plot(x,dgamma(x,20,4),type='l', main = "Changing the Variance (mode - dashed, median - dotted)")
 for(i in 1:6){
-  lines(x,dgamma(x,a[i],r[i]),col=i)}
+  lines(x,dgamma(x,a[i],r[i]),col=i)
+  # if (i > 3){  ## uncomment this line to see the mode and median more clearly for individual distributions
+    mode <- (a[i]-1)/r[i]
+    median <- qgamma(0.5, a[i], r[i])
+    abline(v=mode,col=i,lty=2)
+    abline(v=median,col=i,lty=3)
+  #}
+  }
 var = a/r^2
 mean =  a/r
 legend("topright",legend=format(var,digits=3),lty=1,col=1:6)
@@ -422,7 +462,7 @@ var = 4
 mean = c(1,2,3,4,5)
 rate = mean/var
 shape = mean^2/var
-plot(x,dgamma(x,shape[2],rate[2]),type='l',col=2)
+plot(x,dgamma(x,shape[2],rate[2]),type='l',col=2, main = "Changing the Mean")
 for(i in 1:5){
   lines(x,dgamma(x,shape[i],rate[i]),col=i)
 }
@@ -434,6 +474,8 @@ shape
 ### Lab questions:
 ``` 
 8) Looking at the 'change variance' figure, how does the variance change as a and r increase? Qualitatively, how does this affect the mode and skew? Quantitatively, how does this affect the median (relative to the mean)?
+As a and r increase, the distribution goes from resembling a normal distibution to skewing right, growing a thicker tail, shifting the mode (dashed line) and the median (dotted line) to the left. The median shifts slower than the mode. Mean stays the same (5), the variance decreases. 
+
 ```
 
 # Part 2: Discrete distributions
@@ -446,17 +488,17 @@ The binomial arises naturally from counts of the number of successes given a pro
 x <- 0:11
 
 ## vary size of sample (number of draws)
-size = c(1,5,10)
-plot(x,dbinom(x,size[1],0.5),type='s')
-for(i in 2:3){
+size = c(1,5,10,20)
+plot(x,dbinom(x,size[1],0.5),type='s', main = "Varying the Sample Size")
+for(i in 2:4){
   lines(x,dbinom(x,size[i],0.5),type='s',col=i)
 }
-legend("topright",legend=size,lty=1,col=1:3)
+legend("topright",legend=size,lty=1,col=1:4)
 
 ## vary probability
 n = 10
 p = c(0.1,0.25,0.5)
-plot(x,dbinom(x,n,p[1]),type='s')
+plot(x,dbinom(x,n,p[1]),type='s', main = "Varying the Probability")
 for(i in 2:3){
   lines(x,dbinom(x,n,p[i]),col=i,type='s')
 }
@@ -464,7 +506,7 @@ abline(v = n*p,col=1:3,lty=2)
 legend("topright",legend=p,lty=1,col=1:3)
 
 ## CDF
-plot(x,pbinom(x,n,p[1]),type='s',ylim=c(0,1))
+plot(x,pbinom(x,n,p[1]),type='s',ylim=c(0,1), main = "CDF")
 for(i in 2:3){
   lines(x,pbinom(x,n,p[i]),col=i,type='s')
 }
@@ -476,11 +518,23 @@ hist(rbinom(100,10,0.5)+0.0001,   ## small amount added because
      breaks=0:11,main="Random Binomial") 
 lines(x,dbinom(x,10,0.5),type='s',col=2)	#Analytical solution
 legend("topright",legend=c("sample","pmf"),lty=1,col=1:2)
+
+
+mean <- 5
+# draw a distribution with low n and high p
+hist(rbinom(100,10,mean/10),main="Random Binomial, low n, high p", ylim=c(0, 30), xlim=c(0, 10))
+# draw a distribution with high n and low p
+hist(rbinom(100,100,mean/100),main="Random Binomial, high n, low p", ylim=c(0, 30), xlim=c(0, 10))
 ```
 
 ### Lab questions:
 ```
-9)  Consider a binomial distribution that has a constant mean, np.  What are the differences in the shape of this distribution if it has a high n and low p vs. a low n and high p?
+9)  Consider a binomial distribution that has a constant mean, np.  What are the differences in the shape of this distribution if it has a high n and low p vs. a low n and high p? (probability of success, p, and a sample size, n). 
+
+note that mean = np, and var = np(1-p). see charts above for visual representation.
+
+Low n, high p: concentrated around the mean, with a sharp peak, and a smaller variance.
+High n, low p: spread out, with a flatter peak, and a larger variance.
 ```
 
 ## Poisson
@@ -489,7 +543,7 @@ The Poisson is also very common for count data and arises as the number of event
 
 ```{r}
 x <- 0:12
-plot(x,dpois(x,1),type='s')
+plot(x,dpois(x,1),type='s', main = "Varying the Mean")
 lines(x,dpois(x,2),type='s',col=2)
 lines(x,dpois(x,5),type='s',col=3)
 legend("topright",legend=c(1,2,5),lty=1,col=1:3)
@@ -504,6 +558,13 @@ plot(x,dbinom(x,100,0.5),type='s',col=3)		#Binomial with mean 50 (variance = 25)
 lines(x+0.5,dnorm(x,50,sqrt(25)),col=2)		#Normal with mean 50 and variance of 25
 lines(x,dpois(x,50),col=1,type='s')			#Poisson with mean 50 (variance = 50)
 legend("topright",legend=c("pois","norm","binom"),col=1:3,lty=1)
+
+# compare binom and pois with same mean and var
+x <- 0:100
+plot(x, dpois(x, 50), ylim = c(0, 0.08), col="black", "Question 13: Binomial vs Poisson, same mean and var. ") # mean = var in poisson
+lines(x, dbinom(x, 100, 0.5), col = "red") # np = 50 (mean), np(1-p) = 25 (var)
+legend("topright", legend = c("pois", "binom"), col = 1:2, lty = 1)
+
 ```
 
 The last two panels depict a comparison of the Poisson, Normal, and Binomial with the same mean and a large sample size.  The Poisson and Binomial are identical in the two figures but in the first the normal has the same variance as the Poisson and the second it is the same as the binomial.
@@ -511,9 +572,25 @@ The last two panels depict a comparison of the Poisson, Normal, and Binomial wit
 ### Lab questions:
 ```
 10)  Normal distributions are often applied to count data even though count data can only take on positive integer values.  Is this fair is this to do in these two examples? (i.e. how good is the normal approximation)
+
+With a large lambda, the Poisson distribution can be approximated with/equivalent to a normal distribution. 
+With a large n and similar variances, the binomial distribution can be approximated with a normal distribution. 
+In both cases the normal approximation seems like a good approximation. 
+
 11) Would the normal be a fair approximation to the Poisson curves for small numbers (the first panel)? How about for the Bionomial for small numbers (earlier panel of figures on the Binomial)?
+
+For small numbers, both the Poisson and Binomial distributions are right skewed and are lower-bound, so the normal distribution is not a good approximation, which is symmetric and not lower-bound. 
+
 12) Is the Poisson a good approximation of the Binomial?
+
+For the same mean and variance, the Poisson and Binomial distributions have similar shapes and tails, however, the binomial's values are more concentrated around the mean and has a higher max at the mean. With some tinkering the distributions can have similar shapes, but the means and var will be different, which can introduce errors and uncertainty. Also Poisson is discrete. 
+
 13) Is it possible to choose the parameters so that the Poisson and Binomial to both have the same mean and  variance?  If so what is this parameterization?
+
+Yes:
+Poisson: labmda = 50, 
+Binomial: n = 100, p = 0.5.
+See plot above. 
 ```
 
 ## Negative binomial
@@ -543,7 +620,7 @@ legend("topright",legend=c(0.5,0.3,0.2,0.1),col=1:5,lty=1)
 mean = 8
 var = c(10,20,30)
 size = mean^2/(var-mean)
-plot(x,dnbinom(x,mu=mean,size=size[1]),type="s",ylim=c(0,0.14),main="vary variance")
+plot(x,dnbinom(x,mu=mean,size=size[1]),type="s",ylim=c(0,0.14),main="NB vary variance (Poisson in light blue)")
 lines(x,dnbinom(x,mu=mean,size=size[2]),type="s",col=2)
 lines(x,dnbinom(x,mu=mean,size=size[3]),type="s",col=3)
 legend('topright',legend=format(c(var,mean),digits=2),col=1:4,lty=1)
@@ -562,7 +639,12 @@ lines(x,dnbinom(x,1,0.15),type="s",col=4,lty=2)
 ### Lab questions:
 ``` 
 14)  In the 'vary size' panel, what are the means of the curves? 
+
+dnbinom(x, size, prob): size is an argument for the target of successful trials. The means of the curves is the average number of total trials needed to get the target number of successful trials.
+
 15) In the “vary variance” panel, how does the shape of the Negative Binomial compare to a Poisson with the same mean?
+
+The Poisson distribution with a mean of 8 looks symmetrical about the mean, slightly right skewed and lower-bound). In the Negative Binomial panel the larger the variance the stronger the right skew and the distribution is flatter (also lower bound).
 ```
 
 note: used github copilot during the assignment
