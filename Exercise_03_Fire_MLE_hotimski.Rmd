@@ -1,6 +1,6 @@
 ---
 title: "EE509 Lab 03 - Maximum Likelihood"
-author: " "
+author: "Al Hotimski"
 output: html_document
 ---
 
